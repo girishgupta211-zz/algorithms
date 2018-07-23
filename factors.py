@@ -14,3 +14,10 @@ def factors(n):
 
 facts = factors(10)
 print(facts)
+
+# Using list comprehensions 
+def factors(n):
+    return set(reduce(list.__add__,
+                      ([i, n // i] for i in range(1, int(pow(n, 0.5) + 1)) if n % i == 0)))
+print(factors(16))
+# https://stackoverflow.com/questions/6800193/what-is-the-most-efficient-way-of-finding-all-the-factors-of-a-number-in-python
