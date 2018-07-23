@@ -3,7 +3,7 @@ elm = 10
 k = 0
 while (True):
 	try:
-		i = 2**k - 1 # 0 , 3, 7 , 15
+		i = 2**k - 1 # 0, 1, 3, 7, 15
 		# print k
 		if(arr[i] == elm):
 			print "found at " + str(i)
