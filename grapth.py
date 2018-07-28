@@ -15,8 +15,8 @@ class Graph:
  
     # function to add an edge to graph
     def addEdge(self,u,v):
-        print "u: " + str(u)
-        print "v: " + str(v)
+        print ("u: " + str(u))
+        print ("v: " + str(v))
         self.graph[u].append(v)
  
     # Function to print a BFS of graph
@@ -24,7 +24,7 @@ class Graph:
  
         # Mark all the vertices as not visited
         visited = [False]*(len(self.graph))
-        print visited
+        print (visited)
  
         # Create a queue for BFS
         queue = []
@@ -32,17 +32,17 @@ class Graph:
         # Mark the source node as visited and enqueue it
         queue.append(s)
         visited[s] = True
-        print visited
+        print (visited)
         # print queue
         # print s
  
         while queue:
  
             # Dequeue a vertex from queue and print it
-            print queue
+            print (queue)
             s = queue.pop(0)
-            print s,
-            print "queue" + str(queue)
+            print (s,)
+            print ("queue" + str(queue))
 
  
             # Get all adjacent vertices of the dequeued
@@ -62,5 +62,6 @@ g.addEdge(1, 2)
 g.addEdge(2, 0)
 g.addEdge(2, 3)
 g.addEdge(3, 3)
-print "Following is Breadth First Traversal (starting from vertex 2)"
+print ("Following is Breadth First Traversal (starting from vertex 2)")
 g.BFS(2)
+print(g.graph)
