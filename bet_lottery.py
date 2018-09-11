@@ -1,4 +1,5 @@
 import datetime
+import unittest
 
 
 # Calculating next valid draw date
@@ -6,72 +7,80 @@ import datetime
 # function that calculates and returns the next valid draw date based on an optional supplied date
 # time parameter. If no supplied date is provided, assume current date time
 
-def next_valid_draw(input_date=datetime.datetime.today()):
-    """
-    input_date: date format input
-    return: date for next valid draw
-    """
+def next_lottery_date(input_date=None):
+    """ Calculate and return the next valid Irish Lotto draw date.
+           input_date = datetime object (optional, default value is current date/time) """
 
-    # For Wednesday and Saturday
-    valid_week_day_count_1 = 3
-    valid_week_day_count_2 = 6
-    try:
-        # Get week day from input date, add one to make week days count correct
-        day_num = int(input_date.weekday()) + 1
+    # 0 = Monday, 1 = Tuesday, 2 = Wednesday, .... 6 = Sunday
 
-        if day_num == valid_week_day_count_1 or day_num == valid_week_day_count_2:
-            return datetime.datetime.combine(input_date.date(), datetime.time(20, 00))
-        else:
-            if day_num < valid_week_day_count_1:
-                return datetime.datetime.combine(
-                    (input_date + datetime.timedelta(days=(valid_week_day_count_1 - day_num))).date(),
-                    datetime.time(20, 00))
+    wednesday = 2
+    saturday = 5
+    if input_date is None:
+        input_date = datetime.datetime.now()
+    else:
+        if not isinstance(input_date, datetime.datetime):
+            return "input date format is not datetime type"
 
-            elif day_num < valid_week_day_count_2:
-                return datetime.datetime.combine(
-                    (input_date + datetime.timedelta(days=(valid_week_day_count_2 - day_num))).date(),
-                    datetime.time(20, 00))
+    # after 19:59 you've missed draw, so get the next date
+    if input_date.hour > 19:
+        input_date += datetime.timedelta(days=1)
 
-            # case to handle weekday is 7(Sunday)
-            else:
-                return datetime.datetime.combine((input_date + datetime.timedelta(days=3)).date(),
-                                                 datetime.time(20, 00))
-    except AttributeError as ex:
-        return "input date format is wrong"
+    # Get week day from input date
+    week_day_no = input_date.weekday()
+
+    def _get_combined_date(user_date, days_diff):
+        return datetime.datetime.combine((user_date + datetime.timedelta(days=days_diff)).date(),
+                                         datetime.time(20, 00))
+
+    if week_day_no in (wednesday, saturday):
+        return _get_combined_date(input_date, 0)
+
+    elif week_day_no < wednesday:
+        return _get_combined_date(input_date, wednesday - week_day_no)
+
+    elif week_day_no < saturday:
+        return _get_combined_date(input_date, saturday - week_day_no)
+    # case to handle sunday
+    else:
+        return _get_combined_date(input_date, 3)
 
 
-#############################Unit Test cases###################
-# Test case 01: Check for current date
-result = next_valid_draw()
-print(result)
-# To assert with current date, uncomment below line and update expected date and execute it.
-# assert str(result) == str('2018-09-08 20:00:00')
+class TestNexDrawDate(unittest.TestCase):
+    def test_before_wednesday(self):
+        input_date = datetime.datetime(2018, 9, 10)
+        self.assertEqual(next_lottery_date(input_date), datetime.datetime(2018, 9, 12, 20, 0, 0))
 
-# Test case 02: Check for before Wednesday
-t = datetime.datetime(2018, 9, 3)
-result = next_valid_draw(t)
-assert str(result) == str('2018-09-05 20:00:00')
+    def test_after_wednesday(self):
+        input_date = datetime.datetime(2018, 9, 13)
+        self.assertEqual(next_lottery_date(input_date), datetime.datetime(2018, 9, 15, 20, 0, 0))
 
-# Test case 03: Check for after Wednesday
-t = datetime.datetime(2018, 9, 6)
-result = next_valid_draw(t)
-assert str(result) == str('2018-09-08 20:00:00')
+    def test_after_saturday_before_wednesday(self):
+        input_date = datetime.datetime(2018, 9, 17)
+        self.assertEqual(next_lottery_date(input_date), datetime.datetime(2018, 9, 19, 20, 0, 0))
 
-# Test case 04: Check for after Sunday
-t = datetime.datetime(2018, 9, 9)
-result = next_valid_draw(t)
-assert str(result) == str('2018-09-12 20:00:00')
+    def test_on_wednesday_before_8pm(self):
+        input_date = datetime.datetime(2018, 9, 12, 19, 0, 0)
+        self.assertEqual(next_lottery_date(input_date), datetime.datetime(2018, 9, 12, 20, 0, 0))
 
-# Test case 04: Check for different month
-t = datetime.datetime(2018, 9, 30)
-result = next_valid_draw(t)
-assert str(result) == str('2018-10-03 20:00:00')
+    def test_on_wednesday_after_8pm(self):
+        input_date = datetime.datetime(2018, 9, 12, 21, 0, 0)
+        self.assertEqual(next_lottery_date(input_date), datetime.datetime(2018, 9, 15, 20, 0, 0))
 
-# Test case 05: Check for different year
-t = datetime.datetime(2018, 12, 31)
-result = next_valid_draw(t)
-assert str(result) == str('2019-01-02 20:00:00')
+    def test_on_saturday_before_8pm(self):
+        input_date = datetime.datetime(2018, 9, 15, 19, 0, 0)
+        self.assertEqual(next_lottery_date(input_date), datetime.datetime(2018, 9, 15, 20, 0, 0))
 
-# Test case 06: Check for wrong date format
-result = next_valid_draw('2018')
-assert result == 'input date format is wrong'
+    def test_on_saturday_after_8pm(self):
+        input_date = datetime.datetime(2018, 9, 15, 21, 0, 0)
+        self.assertEqual(next_lottery_date(input_date), datetime.datetime(2018, 9, 19, 20, 0, 0))
+
+    def test_for_wrong_date_format(self):
+        input_date = "2018-9-15"
+        self.assertEqual(next_lottery_date(input_date), "input date format is not datetime type")
+
+    def test_with_current_date(self):
+        self.assertGreaterEqual(next_lottery_date(), datetime.datetime.now())
+
+
+if __name__ == '__main__':
+    unittest.main()
