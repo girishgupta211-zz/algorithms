@@ -22,7 +22,7 @@ def next_lottery_date(input_date=None):
             return "input date format is not datetime type"
 
     # after 19:59 you've missed draw, so get the next date
-    if input_date.hour > 19:
+    if input_date.hour >= 20:
         input_date += datetime.timedelta(days=1)
 
     # Get week day from input date
@@ -33,16 +33,18 @@ def next_lottery_date(input_date=None):
                                          datetime.time(20, 00))
 
     if week_day_no in (wednesday, saturday):
-        return _get_combined_date(input_date, 0)
+        days = 0
 
     elif week_day_no < wednesday:
-        return _get_combined_date(input_date, wednesday - week_day_no)
+        days = wednesday - week_day_no
 
     elif week_day_no < saturday:
-        return _get_combined_date(input_date, saturday - week_day_no)
+        days = saturday - week_day_no
     # case to handle sunday
     else:
-        return _get_combined_date(input_date, 3)
+        days = 3
+
+    return _get_combined_date(input_date, days)
 
 
 class TestNexDrawDate(unittest.TestCase):

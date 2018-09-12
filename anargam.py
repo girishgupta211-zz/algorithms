@@ -6,7 +6,7 @@ from collections import Counter
 # back a list with the valid anagrams for the word inside the given words list.
 
 def is_anagram(string1, string2):
-    return Counter(string1) == Counter(string2)
+    return Counter(string1) == Counter(string2) if len(string1) == len(string2) else False
     # builtin function Counter is better than sorted as it will reduce complexity to O(n)
     # return sorted(string1) == sorted(string2)
 
@@ -22,7 +22,7 @@ def get_anagrams(word, words_list):
 
 class TestAnagrams(unittest.TestCase):
     def test_positive_with_tuple(self):
-        self.assertEqual(get_anagrams('abc', ('abc', 'cb a', 'ba')), ['abc', 'cb a'])
+        self.assertEqual(get_anagrams('dam', ('dam', 'ma d', 'mam')), ['dam', 'ma d'])
 
     def test_positive_with_list(self):
         self.assertEqual(get_anagrams('parties', ['pastier', 'pirates', 'traipse', 'piratis']),
@@ -34,6 +34,12 @@ class TestAnagrams(unittest.TestCase):
 
     def test_negative(self):
         self.assertNotEqual(get_anagrams('abc', ['abc', 'cba', 'ba']), ['ba'])
+
+    def test_is_anagram_positive(self):
+        self.assertEqual(is_anagram('mad', 'dam'), True)
+
+    def test_is_anagram_negative(self):
+        self.assertEqual(is_anagram('mad', 'dams'), False)
 
     def test_exception(self):
         self.assertRaises(TypeError, get_anagrams(1, [1, 2, 3]), [1])
