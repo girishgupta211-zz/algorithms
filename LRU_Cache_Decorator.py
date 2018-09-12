@@ -49,19 +49,19 @@ class LruCache(object):
 
 if __name__ == '__main__':
     """ LRU cache implementation with script"""
-    cacheSize = 2
+    cache_size = 2
 
 
-    @LruCache(max_size=cacheSize)
-    def sum(x, y):
+    @LruCache(max_size=cache_size)
+    def add(x, y):
         return x + y
 
 
-    sum(10, y=11)
-    sum(10, y=12)
-    sum(10, 15)
-    assert (21 not in [v for v in sum.cache.values()])
-    assert (22 in [v for v in sum.cache.values()])
-    assert (25 in [v for v in sum.cache.values()])
-    sum.cache_clean()
-    assert len(sum.cache) == 0
+    add(10, y=11)
+    add(10, y=12)
+    add(10, 15)
+    assert (21 not in [v for v in add.cache.values()])
+    assert (22 in [v for v in add.cache.values()])
+    assert (25 in [v for v in add.cache.values()])
+    add.cache_clean()
+    assert len(add.cache) == 0
