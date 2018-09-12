@@ -53,15 +53,14 @@ if __name__ == '__main__':
 
 
     @LruCache(max_size=cache_size)
-    def add(x, y):
-        return x + y
+    def square(x):
+        return x * x
 
-
-    add(10, y=11)
-    add(10, y=12)
-    add(10, 15)
-    assert (21 not in [v for v in add.cache.values()])
-    assert (22 in [v for v in add.cache.values()])
-    assert (25 in [v for v in add.cache.values()])
-    add.cache_clean()
-    assert len(add.cache) == 0
+    square(2)
+    square(3)
+    square(4)
+    assert (4 not in [v for v in square.cache.values()])
+    assert (9 in [v for v in square.cache.values()])
+    assert (16 in [v for v in square.cache.values()])
+    square.cache_clean()
+    assert len(square.cache) == 0
