@@ -1,5 +1,6 @@
 import datetime
 import unittest
+import dateutil.tz
 
 
 # Calculating next valid draw date
@@ -16,7 +17,7 @@ def next_lottery_date(input_date=None):
     wednesday = 2
     saturday = 5
     if input_date is None:
-        input_date = datetime.datetime.now()
+        input_date = datetime.datetime.utcnow()
     else:
         if not isinstance(input_date, datetime.datetime):
             return "input date format is not datetime type"
@@ -49,19 +50,19 @@ def next_lottery_date(input_date=None):
 
 class TestNexDrawDate(unittest.TestCase):
     def test_before_wednesday(self):
-        input_date = datetime.datetime(2018, 9, 10)
+        input_date = datetime.datetime(2018, 9, 10, tzinfo=dateutil.tz.tzutc())
         self.assertEqual(next_lottery_date(input_date), datetime.datetime(2018, 9, 12, 20, 0, 0))
 
     def test_after_wednesday(self):
-        input_date = datetime.datetime(2018, 9, 13)
+        input_date = datetime.datetime(2018, 9, 13, tzinfo=dateutil.tz.tzutc())
         self.assertEqual(next_lottery_date(input_date), datetime.datetime(2018, 9, 15, 20, 0, 0))
 
     def test_after_saturday_before_wednesday(self):
-        input_date = datetime.datetime(2018, 9, 17)
+        input_date = datetime.datetime(2018, 9, 17, tzinfo=dateutil.tz.tzutc())
         self.assertEqual(next_lottery_date(input_date), datetime.datetime(2018, 9, 19, 20, 0, 0))
 
     def test_on_wednesday_before_8pm(self):
-        input_date = datetime.datetime(2018, 9, 12, 19, 0, 0)
+        input_date = datetime.datetime(2018, 9, 12, 19, 0, 0, tzinfo=dateutil.tz.tzutc())
         self.assertEqual(next_lottery_date(input_date), datetime.datetime(2018, 9, 12, 20, 0, 0))
 
     def test_on_wednesday_after_8pm(self):
@@ -69,11 +70,11 @@ class TestNexDrawDate(unittest.TestCase):
         self.assertEqual(next_lottery_date(input_date), datetime.datetime(2018, 9, 15, 20, 0, 0))
 
     def test_on_saturday_before_8pm(self):
-        input_date = datetime.datetime(2018, 9, 15, 19, 0, 0)
+        input_date = datetime.datetime(2018, 9, 15, 19, 0, 0, tzinfo=dateutil.tz.tzutc())
         self.assertEqual(next_lottery_date(input_date), datetime.datetime(2018, 9, 15, 20, 0, 0))
 
     def test_on_saturday_after_8pm(self):
-        input_date = datetime.datetime(2018, 9, 15, 21, 0, 0)
+        input_date = datetime.datetime(2018, 9, 15, 21, 0, 0, tzinfo=dateutil.tz.tzutc())
         self.assertEqual(next_lottery_date(input_date), datetime.datetime(2018, 9, 19, 20, 0, 0))
 
     def test_for_wrong_date_format(self):
@@ -81,7 +82,7 @@ class TestNexDrawDate(unittest.TestCase):
         self.assertEqual(next_lottery_date(input_date), "input date format is not datetime type")
 
     def test_with_current_date(self):
-        self.assertGreaterEqual(next_lottery_date(), datetime.datetime.now())
+        self.assertGreaterEqual(next_lottery_date(), datetime.datetime.utcnow())
 
 
 if __name__ == '__main__':

@@ -20,16 +20,16 @@ class LruCache(object):
 
     def __call__(self, func):
         def wrapper(*args, **kwargs):
-            args_keys = tuple((k, kwargs[k]) for k in sorted(kwargs.keys()))
-            key = (args, args_keys)
+            kwtuple = tuple((key, kwargs[key]) for key in sorted(kwargs.keys()))
+            key = (args, kwtuple)
 
             # Check if key already exits then update the value and put key in beginning
             with self.lock:
                 if key in args:
-                    val = self.cache[key]
+                    value = self.cache[key]
                     del self.cache[key]
-                    self.cache[key] = val
-                    return val
+                    self.cache[key] = value
+                    return value
 
             # pop item if it's full
             with self.lock:
@@ -37,9 +37,9 @@ class LruCache(object):
                     self.cache.popitem(last=False)
 
             with self.lock:
-                val = func(*args, **kwargs)
-                self.cache[key] = val
-                return val
+                value = func(*args, **kwargs)
+                self.cache[key] = value
+                return value
 
         wrapper.cache = self.cache
         wrapper.max_size = self.max_size
@@ -49,12 +49,12 @@ class LruCache(object):
 
 if __name__ == '__main__':
     """ LRU cache implementation with script"""
-    cache_size = 2
 
 
-    @LruCache(max_size=cache_size)
+    @LruCache(max_size=2)
     def square(x):
         return x * x
+
 
     square(2)
     square(3)
