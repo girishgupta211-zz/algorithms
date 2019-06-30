@@ -1,32 +1,31 @@
 class Node:
-	def __init__(self,data):
-		self.value = data
-		self.left = None
-		self.right = None 
+    def __init__(self, data):
+        self.value = data
+        self.left = None
+        self.right = None
 
 
-arr =  [20,40,50,70,80,100,120,300]
-start = 0
-end = len(arr) -1
-def createBinaryTree(arr,start,end):	
-	if( start > end ):
-		return None
-	middle = start + (end-start)/2	
-	root = Node(arr[middle])
-	root.left = createBinaryTree(arr,start,middle-1)
-	root.right = createBinaryTree(arr,middle+1 , end)
-	return root
+def create_binary_tree(arr, start, end):
+    if start > end:
+        return None
+    middle = start + (end - start) // 2
+    root = Node(arr[middle])
+    root.left = create_binary_tree(arr, start, middle - 1)
+    root.right = create_binary_tree(arr, middle + 1, end)
+    return root
 
 
-root = createBinaryTree(arr,start,end)
+def traverse_in_order(root):
+    if root is None:
+        return
 
-def traveserInorder(root):
-	if (root == None):
-		return
-	
-	traveserInorder(root.left)
-	print root.value
-	traveserInorder(root.right)
+    traverse_in_order(root.left)
+    print(root.value)
+    traverse_in_order(root.right)
 
-	
-traveserInorder(root)
+
+arr_example = [20, 40, 50, 70, 80, 100, 120, 300]
+
+binary_tree = create_binary_tree(arr_example, 0, len(arr_example) - 1)
+
+traverse_in_order(binary_tree)
