@@ -2,8 +2,8 @@
 Implement a least recently used (LRU) cache mechanism using a decorator and demonstrate it use in a small script.
 The LRU must be able to admit a max_size parameter that by default has to be 100.
 """
-from collections import OrderedDict
 from _thread import RLock
+from collections import OrderedDict
 
 
 class LruCache(object):
@@ -20,7 +20,8 @@ class LruCache(object):
 
     def __call__(self, func):
         def wrapper(*args, **kwargs):
-            kwtuple = tuple((key, kwargs[key]) for key in sorted(kwargs.keys()))
+            kwtuple = tuple(
+                (key, kwargs[key]) for key in sorted(kwargs.keys()))
             key = (args, kwtuple)
 
             # Check if key already exits then update the value and put key in beginning
