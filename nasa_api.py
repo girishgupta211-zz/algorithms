@@ -1,5 +1,9 @@
 import requests
 from datetime import datetime
+from datetime import timedelta
+
+import math
+import numpy as np
 
 # NASA's API and API key
 API = "https://api.nasa.gov/planetary/earth/assets"
@@ -13,10 +17,55 @@ INVALID_COORDINATES = 'Invalid coordinate!'
 INSUFFICIENT_DATA = 'Insufficient data recorded'
 
 
+def flyby(latitude, longitude, place='not specified'):
+    print("place ", place)
+
+    # if invalid coordinate print invalid
+    if latitude < -90 or latitude > 90 or longitude < -180 or longitude > 180:
+        print(INVALID_COORDINATES)
+        return INVALID_COORDINATES
+
+    querystring = {"api_key": API_KEY, "lat": str(latitude),
+                   "lon": str(longitude)}
+
+    response = requests.request("GET", API, params=querystring)
+
+    if response.status_code != 200:
+        return response.text
+
+    json_response = response.json()
+    total_records = json_response.get('count')
+    results = json_response.get('results')
+
+    # if count < 2, print insufficient
+    if total_records < 2:
+        print(INSUFFICIENT_DATA)
+        return INSUFFICIENT_DATA
+
+    avg_time_delta, last_date = latest_average_time_delta(results,
+                                                          total_records)
+    sd = get_standard_deviation(results, total_records)
+    print("latest : {}".format(last_date))
+    print("ave_time_delta : {}".format(avg_time_delta))
+
+    dates_diff = datetime.today() - last_date
+    if dates_diff.total_seconds() < 0:
+        predicted = last_date
+    else:
+        dates_diff % avg_time_delta
+        predicted = datetime.today() + (dates_diff % avg_time_delta)
+
+    print("Next time: {}".format(predicted))
+    print("Next time also can be between {} : {}".format(
+        predicted - timedelta(seconds=sd),
+        predicted + timedelta(seconds=sd)))
+    print("-----------------------")
+
+
 def latest_average_time_delta(results, count):
     dates = map(lambda x: datetime.strptime(x['date'], DATE_FORMAT), results)
     dates_list = list(dates)
-    # print(dates_list)
+
     oldest = min(dates_list)
     youngest = max(dates_list)
 
@@ -26,48 +75,21 @@ def latest_average_time_delta(results, count):
     return ave_time_delta, youngest
 
 
-def flyby(latitude, longitude, place='unspecified'):
-    print("place ", place)
-    # if invalid coordinate print invalid
-    if latitude < -90 or latitude > 90 or longitude < -180 or longitude > 180:
-        return INVALID_COORDINATES
-
-    url = API
-
-    querystring = {"api_key": API_KEY, "lat": str(latitude),
-                   "lon": str(longitude)}
-
-    response = requests.request("GET", url, params=querystring)
-
-    if response.status_code != 200:
-        return response.text
-
-    json_response = response.json()
-    count = json_response.get('count')
-    results = json_response.get('results')
-
-    # if count < 2, print insufficient
-    if count < 2:
-        print(INSUFFICIENT_DATA)
-        return INSUFFICIENT_DATA
-
-    ave_time_delta, latest = latest_average_time_delta(results, count)
-    print("latest : {}".format(latest))
-    print("ave_time_delta : {}".format(ave_time_delta))
-
-    dates_diff = datetime.today() - latest
-    if dates_diff.total_seconds() < 0:
-        predicted = latest
-    else:
-        dates_diff % ave_time_delta
-        predicted = datetime.today() + (dates_diff % ave_time_delta)
-
-    # predicted = latest
-    # while predicted <= datetime.today():
-    #     predicted = predicted + ave_time_delta
-
-    print(predicted)
-    print("Next time: {}".format(predicted))
+def get_standard_deviation(results, count):
+    str_dates = map(lambda x: x['date'], results)
+    mean_date = (np.array(list(str_dates), dtype='datetime64[s]')
+                 .view('i8')
+                 .mean()
+                 .astype('datetime64[s]'))
+    print("Average Date ", mean_date)
+    dates = map(lambda x: datetime.strptime(x['date'], DATE_FORMAT), results)
+    dates_list = list(dates)
+    sd = 0.0
+    for date in dates_list:
+        date_diff = date - mean_date.astype(datetime)
+        sd += date_diff.seconds ** 2
+    sd = math.sqrt(sd / float(count - 1))
+    return sd
 
 
 lat = 36.998979
