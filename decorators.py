@@ -2,7 +2,7 @@ from functools import wraps
 
 
 def validate_args(*expected_args):
-    def docorator(func):
+    def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
             print("expected params: {}".format(expected_args))
@@ -12,12 +12,19 @@ def validate_args(*expected_args):
 
         return wrapper
 
-    return docorator
+    return decorator
 
 
 def first_decorator(f):
+    """
+    A function that accepts another function
+    """
+
     @wraps(f)
     def wrapped(*args, **kwargs):
+        """
+                A wrapping function
+        """
         print("Before first decorated function")
         r = f(*args, **kwargs)
         print("After second decorated function")
