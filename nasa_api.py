@@ -13,56 +13,101 @@ API_KEY = "9Jz6tLIeJ0yY9vjbEUWaH9fsXA930J9hspPchute"
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
 # Error Constants
-INVALID_COORDINATES = 'Invalid coordinate!'
-INSUFFICIENT_DATA = 'Insufficient data recorded'
+INVALID_COORDINATES = 'ERROR_INVALID_COORDINATE'
+INSUFFICIENT_DATA = 'ERROR_INSUFFICIENT_DATA_RECORDED'
+UNHANDLED_RESPONSE = 'ERROR_UNHANDLED_RESPONSE'
 
 
-def flyby(latitude, longitude, place='not specified'):
-    print("place ", place)
+class BaseException(Exception):
+    """
+    Base exception class
+    """
+    err_code = None
+    err_str = None
 
-    # if invalid coordinate print invalid
-    if latitude < -90 or latitude > 90 or longitude < -180 or longitude > 180:
-        print(INVALID_COORDINATES)
-        return INVALID_COORDINATES
-
-    querystring = {"api_key": API_KEY, "lat": str(latitude),
-                   "lon": str(longitude)}
-
-    response = requests.request("GET", API, params=querystring)
-
-    if response.status_code != 200:
-        return response.text
-
-    json_response = response.json()
-    total_records = json_response.get('count')
-    results = json_response.get('results')
-
-    # if count < 2, print insufficient
-    if total_records < 2:
-        print(INSUFFICIENT_DATA)
-        return INSUFFICIENT_DATA
-
-    avg_time_delta, last_date = latest_average_time_delta(results,
-                                                          total_records)
-    sd = get_standard_deviation(results, total_records)
-    print("latest : {}".format(last_date))
-    print("ave_time_delta : {}".format(avg_time_delta))
-
-    dates_diff = datetime.today() - last_date
-    if dates_diff.total_seconds() < 0:
-        predicted = last_date
-    else:
-        dates_diff % avg_time_delta
-        predicted = datetime.today() + (dates_diff % avg_time_delta)
-
-    print("Next time: {}".format(predicted))
-    print("Next time also can be between {} : {}".format(
-        predicted - timedelta(seconds=sd),
-        predicted + timedelta(seconds=sd)))
-    print("-----------------------")
+    def to_dict(self):
+        """
+        return json object
+        """
+        return {
+            'err_code': self.err_code,
+            'err_str': self.err_str
+        }
 
 
-def latest_average_time_delta(results, count):
+class UnhandledResponseError(BaseException):
+    """
+    Unhandled response
+    """
+    err_code = 1000
+    err_str = UNHANDLED_RESPONSE
+
+
+class InvalidCoordinateError(BaseException):
+    """
+    Invalid Coordinate exception
+    """
+    err_code = 1001
+    err_str = INVALID_COORDINATES
+
+
+class InsufficientDataError(BaseException):
+    """
+    Insufficient data recorded
+    """
+    err_code = 1002
+    err_str = INSUFFICIENT_DATA
+
+
+def flyby(latitude, longitude):
+    try:
+        if latitude < -90 or latitude > 90 or longitude < -180 or longitude > 180:
+            raise InvalidCoordinateError
+
+        querystring = {"api_key": API_KEY, "lat": str(latitude),
+                       "lon": str(longitude)}
+
+        response = requests.request("GET", API, params=querystring)
+
+        if response.status_code != 200:
+            raise UnhandledResponseError
+
+        json_response = response.json()
+        total_records = json_response.get('count')
+        results = json_response.get('results')
+
+        if total_records < 2:
+            raise InsufficientDataError
+
+        avg_time_delta, last_date = \
+            get_last_date_and_average_time_delta(results, total_records)
+
+        sd = get_standard_deviation(results, total_records)
+        print("latest : {}".format(last_date))
+        print("average time delta : {}".format(avg_time_delta))
+
+        dates_diff = datetime.today() - last_date
+        if dates_diff.total_seconds() < 0:
+            predicted = last_date
+        else:
+            dates_diff % avg_time_delta
+            predicted = datetime.today() + (dates_diff % avg_time_delta)
+
+        print("Next time: {}".format(predicted))
+        print("Next time also can be between {} : {}".format(
+            predicted - timedelta(seconds=sd),
+            predicted + timedelta(seconds=sd)))
+        print("-----------------------")
+        return predicted
+
+    except (InvalidCoordinateError, InsufficientDataError,
+            UnhandledResponseError) as err:
+        print(err.to_dict())
+        print("-----------------------")
+        return err.to_dict()
+
+
+def get_last_date_and_average_time_delta(results, count):
     dates = map(lambda x: datetime.strptime(x['date'], DATE_FORMAT), results)
     dates_list = list(dates)
 
@@ -81,7 +126,6 @@ def get_standard_deviation(results, count):
                  .view('i8')
                  .mean()
                  .astype('datetime64[s]'))
-    print("Average Date ", mean_date)
     dates = map(lambda x: datetime.strptime(x['date'], DATE_FORMAT), results)
     dates_list = list(dates)
     sd = 0.0
@@ -92,41 +136,50 @@ def get_standard_deviation(results, count):
     return sd
 
 
-lat = 36.998979
-lon = -109.045183
+print("GULF OF GUINEA")
+result = flyby(0.000000, 0.000000)
+assert result['err_str'] == INSUFFICIENT_DATA
 
-flyby(lat, lon)
+print("GRAND CANYON")
+result = flyby(36.098592, -112.097796)
+assert result is not None
 
-flyby(0.000000, 0.000000, "GULF OF GUINEA")
-flyby(36.098592, -112.097796, "GRAND CANYON")
-flyby(43.078154, -79.075891, "NIAGARA FALLS")
-flyby(36.998979, -109.045183, "FOUR CORNERS")
-flyby(37.7937007, -122.4039064, "DELPHIX")
+print("NIAGARA FALLS")
+result = flyby(43.078154, -79.075891)
+assert result is not None
 
-# BOUNDARY/EDGE
+print("FOUR CORNERS")
+result = flyby(36.998979, -109.045183)
+assert result is not None
 
-# MINIMUM LATITUDE
-flyby(-90.000001, 0.000000, "MIN LAT 1")
-flyby(-90.000000, 0.000000, "MIN LAT 2")
-flyby(-89.999999, 0.000000, "MIN LAT 3")
+print("DELPHIX")
+result = flyby(37.7937007, -122.4039064)
+assert result is not None
 
-# MAXIMUM LATITUDE
-flyby(89.999999, 0.000000, "MAX LAT 1")
-flyby(90.000000, 0.000000, "MAX LAT 2")
-flyby(90.000001, 0.000000, "MAX LAT 3")
+print("Invalid Latitude Negative")
+result = flyby(-90.000001, 0.000000, )
+assert result['err_str'] == INVALID_COORDINATES
+print("Minimum Latitude")
+result = flyby(-90.000000, 0.000000)
+assert result['err_str'] == INSUFFICIENT_DATA
 
-# MINIMUM LONGITUDE
-flyby(0.000000, -180.000001, "MIN LON 1")
-flyby(0.000000, -180.000000, "MIN LON 2")
-flyby(0.000000, -179.999999, "MIN LON 3")
+print("Invalid Latitude Positive")
+result = flyby(90.000001, 0.000000, )
+assert result['err_str'] == INVALID_COORDINATES
+print("Maximum Latitude")
+result = flyby(90.000000, 0.000000)
+assert result['err_str'] == INSUFFICIENT_DATA
 
-# MAXIMUM LONGITUDE
-flyby(0.000000, 179.999999, "MAX LON 1")
-flyby(0.000000, 180.000000, "MAX LON 2")
-flyby(0.000000, 180.000001, "MAX LON 3")
+print("Invalid Longitude Negative")
+result = flyby(0.000000, -180.000001)
+assert result['err_str'] == INVALID_COORDINATES
+print("Minimum Longitude")
+result = flyby(0.000000, -180.000000)
+assert result['err_str'] == INSUFFICIENT_DATA
 
-# EDGES COMBINATION
-flyby(-90.000000, -180.000000, "MIN LAT, MIN LON")
-flyby(-90.000000, 180.000000, "MIN LAT, MAX LON")
-flyby(90.000000, -180.000000, "MAX LAT, MIN LON")
-flyby(90.000000, 180.000000, "MAX LAT, MAX LON")
+print("Invalid Longitude Positive")
+result = flyby(0.000000, 180.000001, )
+assert result['err_str'] == INVALID_COORDINATES
+print("Maximum Longitude")
+result = flyby(0.000000, 180.000000, )
+assert result['err_str'] == INSUFFICIENT_DATA

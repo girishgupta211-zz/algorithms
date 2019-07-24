@@ -16,3 +16,9 @@ def func(required_arg, *args, **kwargs):
 
 
 func("required argument", 1, 2, '3', keyword1=4, keyword2="foo")
+
+# required argument
+# (1, 2, '3')
+# <class 'tuple'>
+# {'keyword1': 4, 'keyword2': 'foo'}
+# <class 'dict'>

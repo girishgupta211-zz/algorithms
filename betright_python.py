@@ -62,8 +62,11 @@ class Human(object):
 
 
 h = Human()
-h.birthdate = datetime.datetime(1994, 8, 20)
-h.age = 28
+h.birthdate = datetime.datetime(2004, 8, 20)
+print(h.__dict__)
+# h.age = 28 # if you set age with this way then it will add age attribute to
+# __dict__ and when you can h.age, then I will not call __getattr__
+
 print(h.age)
 # 28
 print(h.__dict__)
