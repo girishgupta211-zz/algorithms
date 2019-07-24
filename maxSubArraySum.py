@@ -15,3 +15,12 @@ for item in arr:
 
 print(max_so_far)
 # print currMax
+
+arr = [2, 3, 4, -1, 2, 1, 5, -30, 5, 5, 6, 7]
+max_sum = arr[0]
+curr_max = arr[0]
+for elm in arr:
+    curr_max = max(curr_max + elm, elm)
+    max_sum = max(curr_max, max_sum)
+
+print(max_sum)

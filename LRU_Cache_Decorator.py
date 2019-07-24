@@ -32,7 +32,7 @@ class LruCache(object):
                     self.cache[key] = value
                     return value
 
-            # pop item if it's full
+            # pop item if it's full in FIFO order
             with self.lock:
                 if len(self.cache) == self.max_size:
                     self.cache.popitem(last=False)
