@@ -45,3 +45,5 @@ tree.right.right.left = Node(4)
 
 result = bottom_view(tree)
 print(result)
+nodes = [node for node in result.values()]
+print(','.join(map(str, nodes)))
