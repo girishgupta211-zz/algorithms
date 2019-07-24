@@ -42,7 +42,7 @@ class Graph:
         return edges
 
     def find_distance(self, vertex):
-        visited, distances, nodes = dict(), dict(), dict()
+        visited, distances, parent_nodes = dict(), dict(), dict()
         for key in self.graph.keys():
             visited[key] = False
             distances[key] = -1
@@ -59,10 +59,10 @@ class Graph:
                     distances[neighbour] = distances[elm] + 1
                     q.put(neighbour)
                     visited[neighbour] = True
-                    nodes[neighbour] = elm
-        return distances, nodes
+                    parent_nodes[neighbour] = elm
+        return distances, parent_nodes
 
-    # TODO this is not gining the shortest path
+    # TODO this is not giving the shortest path
     def find_path(self, start, end, path=[]):
         path = path + [start]
         # path = path.append([start])
@@ -88,16 +88,16 @@ if __name__ == '__main__':
     graph.generate_edges()
     start_node = 1
     destination_node = 4
-    distances_from_start, parent_nodes = graph.find_distance(start_node)
+    distances_from_start_map, parents = graph.find_distance(start_node)
     # shortest_path = graph.find_path(1, 4)
-    min_distance = distances_from_start[destination_node]
+    min_distance = distances_from_start_map[destination_node]
     print("minimum distance between {} and {}: {}".
           format(start_node, destination_node, min_distance))
 
     crawl = destination_node
     shortest_path = [destination_node]
     while crawl != start_node:
-        parent = parent_nodes[crawl]
+        parent = parents[crawl]
         shortest_path.insert(0, parent)
         crawl = parent
     print("shortest path between {} and {}: {}".
