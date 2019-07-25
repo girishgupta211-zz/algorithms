@@ -51,6 +51,7 @@ class BinaryHeap:
         self.min_heapify(0)
         return minimum
 
+    # This is in place changes for array, so return is not required
     def max_heapify(self, index):
         left = self.left(index)
         right = self.right(index)
@@ -84,22 +85,22 @@ class BinaryHeap:
         self.items.append(key)
 
         while index != 0:
-            parent = self.parent(index)
-            if self.get(parent) < self.get(index):
-                self.items[index], self.items[parent] = \
-                    self.items[parent], self.items[index]
-            index = parent
+            parent_index = self.parent(index)
+            if self.get(parent_index) < self.get(index):
+                self.items[index], self.items[parent_index] = \
+                    self.items[parent_index], self.items[index]
+            index = parent_index
 
     def insert_min_heap(self, key):
         index = self.size()
         self.items.append(key)
 
         while index != 0:
-            parent = self.parent(index)
-            if self.get(parent) > self.get(index):
-                self.items[index], self.items[parent] = \
-                    self.items[parent], self.items[index]
-            index = parent
+            parent_index = self.parent(index)
+            if self.get(parent_index) > self.get(index):
+                self.items[index], self.items[parent_index] = \
+                    self.items[parent_index], self.items[index]
+            index = parent_index
 
 
 if __name__ == '__main__':
@@ -134,3 +135,47 @@ if __name__ == '__main__':
 
     while min_heap.size() != 1:
         print(min_heap.extract_min())
+
+
+def find_moving_median_of_numbers(arr):
+    left_heap = BinaryHeap()
+    right_heap = BinaryHeap()
+    print(arr)
+    median = 0
+    for elem in arr:
+
+        # case 1 if size of left heap is more than right side heap
+        if left_heap.size() > right_heap.size():
+            if elem > median:
+                right_heap.insert_max_heap(elem)
+            else:
+                # remove from left and add to right
+                # add new element to left
+                right_heap.insert_min_heap(left_heap.extract_max())
+                left_heap.insert_max_heap(elem)
+            # Now both heaps are of same size, so median will be the avg of mid
+            # elements
+            median = (left_heap.get_max() + right_heap.get_min()) / 2
+
+        # case 2 if size of right heap is more than left side heap
+        elif left_heap.size() < right_heap.size():
+            if elem < median:
+                left_heap.insert_max_heap(elem)
+            else:
+                left_heap.insert_max_heap(right_heap.extract_min())
+                right_heap.insert_min_heap(elem)
+            median = (left_heap.get_max() + right_heap.get_min()) / 2
+
+        # case 2 if size of right heap is equal to left side heap
+        else:
+            if elem < median:
+                left_heap.insert_max_heap(elem)
+                median = left_heap.get_min()
+            else:
+                right_heap.insert_min_heap(elem)
+                median = right_heap.get_max()
+        print(median)
+
+
+print("find_moving_median_of_numbers")
+find_moving_median_of_numbers([2, 4, 8, 10, 6, 12, 14])
