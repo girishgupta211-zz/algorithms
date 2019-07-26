@@ -38,7 +38,6 @@ def get_min_dice_throws(move, N):
     queue.append(QueueEntry(0, 0))
 
     # Do a BFS starting from vertex at index 0 
-    qe = QueueEntry()  # A queue entry (qe)
     while queue:
         qe = queue.pop(0)
         v = qe.v  # Vertex no. of queue entry
