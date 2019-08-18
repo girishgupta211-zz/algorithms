@@ -34,7 +34,7 @@ def first_decorator(f):
 
 
 @first_decorator
-@validate_args('test param1', 'test param2')
+@validate_args('upload param1', 'upload param2')
 def sum_two_numbers(a, b):
     print("Inside the sum_two_numbers function")
     return a + b

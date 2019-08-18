@@ -56,7 +56,7 @@ tree_root.right.right = Node(7)
 # print height(root)
 print_notes_at_k_distance(tree_root, 2)
 
-# Driver program to test above function
+# Driver program to upload above function
 tree_root = Node(5)
 tree_root.left = Node(2)
 tree_root.right = Node(6)

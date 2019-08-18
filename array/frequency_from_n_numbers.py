@@ -7,5 +7,3 @@ for i, num in enumerate(arr):
 
 for i, num in enumerate(arr):
     print("{} : {}".format(i + 1, num // n))
-
-# topological sort

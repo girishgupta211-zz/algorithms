@@ -54,7 +54,7 @@ def count_length_of_cycle(arr, start_index):
 def do_tests_pass():
     """ Returns True if all tests pass. Otherwise returns False.
 
-    TODO: We've implement a simple test harness here. Feel free to add
+    TODO: We've implement a simple upload harness here. Feel free to add
     more tests and improve.
     """
 

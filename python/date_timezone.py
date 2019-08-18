@@ -6,7 +6,7 @@ from dateutil.parser import parse
 input_dates = "2019-03-15T11:01:38+05:30,2019-03-15T11:01:38+05:30"
 input_dates_arr = input_dates.split(',')
 dates_epoch = []
-test_list = ['test', 'test_hin']
+test_list = ['upload', 'test_hin']
 
 for input_date in input_dates_arr:
     get_date_obj = parse(input_date).astimezone(pytz.utc)

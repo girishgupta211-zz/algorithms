@@ -18,11 +18,11 @@ class A:
 
     @staticmethod
     def my_print():
-        print("test")
+        print("upload")
 
     @classmethod
     def my_print(cls):
-        print("test")
+        print("upload")
         print(b)
 
 

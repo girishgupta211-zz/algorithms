@@ -1,13 +1,17 @@
-import requests
+import math
+import time
 from datetime import datetime
 from datetime import timedelta
+from functools import wraps
 
-import math
 import numpy as np
+import requests
 
 # NASA's API and API key
 API = "https://api.nasa.gov/planetary/earth/assets"
-API_KEY = "9Jz6tLIeJ0yY9vjbEUWaH9fsXA930J9hspPchute"
+
+# This can go to some configuration file
+API_KEY = "9Jz6tLIeJ0yY9vjbEUWaH9fsXA930J9hspPchut"
 
 # Constants
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'
@@ -59,7 +63,47 @@ class InsufficientDataError(BaseException):
     err_str = INSUFFICIENT_DATA
 
 
+def retry(ExceptionToCheck, tries=4, delay=3, backoff=2):
+    """Retry calling the decorated function using an exponential backoff.
+
+    :param ExceptionToCheck: the exception to check
+    :param tries: number of times to try (not retry) before giving up
+    :type tries: int
+    :param delay: initial delay between retries in seconds
+    :type delay: int
+    :param backoff: backoff multiplier e.g. value of 2 will double the delay each retry
+    :type backoff: int
+    """
+
+    def deco_retry(f):
+
+        @wraps(f)
+        def f_retry(*args, **kwargs):
+            mtries, mdelay = tries, delay
+            while mtries > 1:
+                try:
+                    return f(*args, **kwargs)
+                except ExceptionToCheck as e:
+                    msg = "%s, Retrying in %d seconds..." % (str(e), mdelay)
+                    print(msg)
+                    time.sleep(mdelay)
+                    mtries -= 1
+                    mdelay *= backoff
+            return f(*args, **kwargs)
+
+        return f_retry  # true decorator
+
+    return deco_retry
+
+
+@retry(UnhandledResponseError, tries=4)
 def flyby(latitude, longitude):
+    """
+    get next time a photo will be taken by a satellite
+    :param latitude:
+    :param longitude:
+    :return:
+    """
     try:
         if latitude < -90 or latitude > 90 or longitude < -180 or longitude > 180:
             raise InvalidCoordinateError
@@ -69,6 +113,7 @@ def flyby(latitude, longitude):
 
         response = requests.request("GET", API, params=querystring)
 
+        # if response.status_code == 403
         if response.status_code != 200:
             raise UnhandledResponseError
 
@@ -100,8 +145,7 @@ def flyby(latitude, longitude):
         print("-----------------------")
         return predicted
 
-    except (InvalidCoordinateError, InsufficientDataError,
-            UnhandledResponseError) as err:
+    except (InvalidCoordinateError, InsufficientDataError) as err:
         print(err.to_dict())
         print("-----------------------")
         return err.to_dict()
@@ -136,50 +180,51 @@ def get_standard_deviation(results, count):
     return sd
 
 
-print("GULF OF GUINEA")
-result = flyby(0.000000, 0.000000)
-assert result['err_str'] == INSUFFICIENT_DATA
-
-print("GRAND CANYON")
-result = flyby(36.098592, -112.097796)
-assert result is not None
-
-print("NIAGARA FALLS")
-result = flyby(43.078154, -79.075891)
-assert result is not None
-
-print("FOUR CORNERS")
-result = flyby(36.998979, -109.045183)
-assert result is not None
-
-print("DELPHIX")
-result = flyby(37.7937007, -122.4039064)
-assert result is not None
-
-print("Invalid Latitude Negative")
-result = flyby(-90.000001, 0.000000, )
-assert result['err_str'] == INVALID_COORDINATES
-print("Minimum Latitude")
-result = flyby(-90.000000, 0.000000)
-assert result['err_str'] == INSUFFICIENT_DATA
-
-print("Invalid Latitude Positive")
-result = flyby(90.000001, 0.000000, )
-assert result['err_str'] == INVALID_COORDINATES
-print("Maximum Latitude")
-result = flyby(90.000000, 0.000000)
-assert result['err_str'] == INSUFFICIENT_DATA
-
-print("Invalid Longitude Negative")
-result = flyby(0.000000, -180.000001)
-assert result['err_str'] == INVALID_COORDINATES
-print("Minimum Longitude")
-result = flyby(0.000000, -180.000000)
-assert result['err_str'] == INSUFFICIENT_DATA
-
-print("Invalid Longitude Positive")
-result = flyby(0.000000, 180.000001, )
-assert result['err_str'] == INVALID_COORDINATES
-print("Maximum Longitude")
-result = flyby(0.000000, 180.000000, )
-assert result['err_str'] == INSUFFICIENT_DATA
+if __name__ == "__main__":
+    print("GULF OF GUINEA")
+    result = flyby(0.000000, 0.000000)
+    # assert result['err_str'] == INSUFFICIENT_DATA
+    #
+    # print("GRAND CANYON")
+    # result = flyby(36.098592, -112.097796)
+    # assert result is not None
+    #
+    # print("NIAGARA FALLS")
+    # result = flyby(43.078154, -79.075891)
+    # assert result is not None
+    #
+    # print("FOUR CORNERS")
+    # result = flyby(36.998979, -109.045183)
+    # assert result is not None
+    #
+    # print("DELPHIX")
+    # result = flyby(37.7937007, -122.4039064)
+    # assert result is not None
+    #
+    # print("Invalid Latitude Negative")
+    # result = flyby(-90.000001, 0.000000, )
+    # assert result['err_str'] == INVALID_COORDINATES
+    # print("Minimum Latitude")
+    # result = flyby(-90.000000, 0.000000)
+    # assert result['err_str'] == INSUFFICIENT_DATA
+    #
+    # print("Invalid Latitude Positive")
+    # result = flyby(90.000001, 0.000000, )
+    # assert result['err_str'] == INVALID_COORDINATES
+    # print("Maximum Latitude")
+    # result = flyby(90.000000, 0.000000)
+    # assert result['err_str'] == INSUFFICIENT_DATA
+    #
+    # print("Invalid Longitude Negative")
+    # result = flyby(0.000000, -180.000001)
+    # assert result['err_str'] == INVALID_COORDINATES
+    # print("Minimum Longitude")
+    # result = flyby(0.000000, -180.000000)
+    # assert result['err_str'] == INSUFFICIENT_DATA
+    #
+    # print("Invalid Longitude Positive")
+    # result = flyby(0.000000, 180.000001, )
+    # assert result['err_str'] == INVALID_COORDINATES
+    # print("Maximum Longitude")
+    # result = flyby(0.000000, 180.000000, )
+    # assert result['err_str'] == INSUFFICIENT_DATA
