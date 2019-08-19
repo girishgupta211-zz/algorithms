@@ -27,5 +27,3 @@ wt = [10, 20, 30]
 W = 50
 n = len(val)
 print(knap_sack(W, wt, val, n))
-
-# This code is contributed by Bhavya Jain
