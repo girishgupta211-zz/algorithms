@@ -5,18 +5,6 @@ class Node:
         self.right = None
 
 
-def print_notes_at_k_distance(root, k):
-    print("printing nodes at label: {}".format(k))
-    if root is None:
-        return
-    if k == 0:
-        print(root.value)
-    else:
-        # print k-1
-        print_notes_at_k_distance(root.left, k - 1)
-        print_notes_at_k_distance(root.right, k - 1)
-
-
 def get_level_diff(root):
     if root is None:
         return 0
@@ -30,9 +18,9 @@ def print_at_a_level(root, label):
         return
     if label == 1:
         print(root.value)
-
-    print_at_a_level(root.left, label - 1)
-    print_at_a_level(root.right, label - 1)
+    else:
+        print_at_a_level(root.left, label - 1)
+        print_at_a_level(root.right, label - 1)
 
 
 def height(root):
@@ -51,7 +39,6 @@ tree_root.left.right = Node(5)
 tree_root.right.left = Node(6)
 tree_root.right.right = Node(7)
 print(height(tree_root))
-print_notes_at_k_distance(tree_root, 2)
 
 # Driver program to upload above function
 tree_root = Node(5)
@@ -64,13 +51,15 @@ tree_root.right.right = Node(8)
 tree_root.right.right.right = Node(9)
 tree_root.right.right.left = Node(7)
 
-# print_notes_at_k_distance(root,0)
 # print get_level_diff(root)
 
 # print_at_a_level(root,4)
 
 # for i in range(0,5):
 # 	print_at_a_level(root,i)
+print("print_at_a_level 2")
+print_at_a_level(tree_root, 2)
+
 print("Function to  print level order traversal of tree")
 
 
