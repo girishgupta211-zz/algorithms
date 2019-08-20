@@ -40,10 +40,7 @@ def height(root):
         return 0
     left_height = height(root.left)
     right_height = height(root.right)
-    if left_height > right_height:
-        return left_height + 1
-    else:
-        return right_height + 1
+    return 1 + max(left_height, right_height)
 
 
 tree_root = Node(1)
@@ -53,7 +50,7 @@ tree_root.left.left = Node(4)
 tree_root.left.right = Node(5)
 tree_root.right.left = Node(6)
 tree_root.right.right = Node(7)
-# print height(root)
+print(height(tree_root))
 print_notes_at_k_distance(tree_root, 2)
 
 # Driver program to upload above function
