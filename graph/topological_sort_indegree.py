@@ -16,11 +16,11 @@ class Graph:
     # The function to do Topological Sort.
     def topologicalSort(self):
 
-        # Create a vector to store indegrees of all
-        # vertices. Initialize all indegrees as 0.
+        # Create a vector to store in degrees of all
+        # vertices. Initialize all in degrees as 0.
         in_degree = [0] * self.V
 
-        # Traverse adjacency lists to fill indegrees of
+        # Traverse adjacency lists to fill in degrees of
         # vertices. This step takes O(V+E) time
         for i in self.graph:
             for j in self.graph[i]:

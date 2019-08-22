@@ -1,6 +1,4 @@
-# Python program to find the maximum for
-# each and every contiguous subarray of
-# size k
+# Python program to find the maximum for each and every contiguous subarray of size k
 
 from collections import deque
 
@@ -9,14 +7,10 @@ from collections import deque
 # method for printing maximum element
 # of all subarrays of size k
 def printMax(arr, n, k):
-    """ Create a Double Ended Queue, Qi that
-    will store indexes of array elements.
-    The queue will store indexes of useful
-    elements in every window and it will
-    maintain decreasing order of values from
-    front to rear in Qi, i.e., arr[Qi.front[]]
-    to arr[Qi.rear()] are sorted in decreasing
-    order"""
+    """ Create a Double Ended Queue, Qi that will store indexes of array elements.
+    The queue will store indexes of useful elements in every window and it will
+    maintain decreasing order of values from front to rear in Qi, i.e., arr[Qi.front[]]
+    to arr[Qi.rear()] are sorted in decreasing order"""
     Qi = deque()
 
     # Process first k (or first window)
@@ -39,7 +33,7 @@ def printMax(arr, n, k):
         # The element at the front of the
         # queue is the largest element of
         # previous window, so print it
-        print(str(arr[Qi[0]]) + " ", end="")
+        print(str(arr[Qi[0]]), end=" ")
 
         # Remove the elements which are
         # out of this window
@@ -47,8 +41,7 @@ def printMax(arr, n, k):
             # remove from front of deque
             Qi.popleft()
 
-        # Remove all elements smaller than
-        # the currently being added element
+        # Remove all elements smaller than the currently being added element
         # (Remove useless elements)
         while Qi and arr[i] >= arr[Qi[-1]]:
             Qi.pop()
@@ -65,5 +58,3 @@ if __name__ == "__main__":
     arr = [12, 1, 78, 90, 57, 89, 56]
     k = 3
     printMax(arr, len(arr), k)
-
-# This code is contributed by Shiv Shankar

@@ -9,14 +9,14 @@ row = [-1, 0, 0, 1]
 col = [0, -1, 1, 0]
 
 
-def isValid(mat, numRows, numColumns, visited, row, col):
-    status = (row >= 0) and (row < numRows) and (col >= 0) and (col < numColumns) and mat[row][col] == 1 and not \
+def isValid(mat, num_rows, num_columns, visited, row, col):
+    status = (row >= 0) and (row < num_rows) and (col >= 0) and (col < num_columns) and mat[row][col] == 1 and not \
         visited[row][col]
     return status
 
 
-def BFS(mat, numRows, numColumns, i, j, x, y):
-    visited = [[False for i in range(numColumns)] for j in range(numRows)]
+def BFS(mat, num_rows, num_columns, i, j, x, y):
+    visited = [[False for i in range(num_columns)] for j in range(num_rows)]
     q = []
     visited[i][j] = True
     q.append(Node(i, j, 0))
@@ -31,7 +31,7 @@ def BFS(mat, numRows, numColumns, i, j, x, y):
             break
 
         for k in range(4):
-            status = isValid(mat, numRows, numColumns, visited, i + row[k], j + col[k])
+            status = isValid(mat, num_rows, num_columns, visited, i + row[k], j + col[k])
             if status:
                 visited[i + row[k]][j + col[k]] = True
                 q.append(Node(i + row[k], j + col[k], dist + 1))
@@ -42,21 +42,21 @@ def BFS(mat, numRows, numColumns, i, j, x, y):
         return 0
 
 
-def find_obstacle(numRows, numColumns, lot):
-    for i in range(numRows):
-        for j in range(numColumns):
+def find_obstacle(num_rows, num_columns, lot):
+    for i in range(num_rows):
+        for j in range(num_columns):
             if lot[i][j] == 9:
                 return i, j
     return 0
 
 
-def removeObstacle(numRows, numColumns, lot):
+def removeObstacle(num_rows, num_columns, lot):
     # WRITE YOUR CODE HERE
-    destination = find_obstacle(numRows, numColumns, lot)
+    destination = find_obstacle(num_rows, num_columns, lot)
     if destination == 0:
         return 0
     lot[destination[0]][destination[1]] = 1
-    result = BFS(lot, numRows, numColumns, 0, 0, destination[0], destination[1])
+    result = BFS(lot, num_rows, num_columns, 0, 0, destination[0], destination[1])
     return result
 
 

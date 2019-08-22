@@ -1,10 +1,8 @@
 def find_water(arr, n):
-    # left[i] contains height of tallest bar to the
-    # left of i'th bar including itself 
+    # left[i] contains height of tallest bar to the left of i'th bar including itself
     left = [0] * n
 
-    # Right [i] contains height of tallest bar to 
-    # the right of ith bar including itself 
+    # Right [i] contains height of tallest bar to the right of ith bar including itself
     right = [0] * n
 
     # Initialize result 
@@ -18,7 +16,7 @@ def find_water(arr, n):
     # Fill right array. start from end
     right[n - 1] = arr[n - 1]
     for i in range(n - 2, -1, -1):
-        right[i] = max(right[i + 1], arr[i]);
+        right[i] = max(right[i + 1], arr[i])
 
     # Calculate the accumulated water element by element
     # consider the amount of water on i'th bar, the 

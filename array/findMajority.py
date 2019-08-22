@@ -18,7 +18,8 @@ def find_candidate(arr):
 
 # Function to check if the candidate occurs more than n/2 times
 def is_majority(arr, cand):
-    count = len([x for x in arr if x == cand])
+    count = len(list(filter(lambda x: x == cand, arr)))
+    # count = len([x for x in arr if x == cand])
     if count > len(arr) / 2:
         return True
     else:

@@ -27,14 +27,16 @@ def findMissingUtil(arr, low, high, diff):
     if mid > 0 and arr[mid] - arr[mid - 1] != diff:
         return arr[mid - 1] + diff
 
-        # If the elements till mid follow AP,
+    # If the elements till mid follow AP,
     # then recur for right half
     if arr[mid] == arr[0] + mid * diff:
         return findMissingUtil(arr, mid + 1, high, diff)
 
-        # Else recur for left half
+    # if arr[mid] == arr[-1] - mid * diff:
+    #     return findMissingUtil(arr, low, mid - 1, diff)
+    # Else recur for left half
     return findMissingUtil(arr, low, mid - 1, diff)
-
+#
 
 # The function uses findMissingUtil() to find
 # the missing element in AP. It assumes that
@@ -60,5 +62,4 @@ def findMissing(arr, n):
 # Driver Code
 arr = [2, 4, 8, 10, 12, 14]
 n = len(arr)
-print("The missing element is",
-      findMissing(arr, n))
+print("The missing element is", findMissing(arr, n))
