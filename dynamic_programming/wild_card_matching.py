@@ -7,40 +7,41 @@ def isMatch(string, pattern):
 
     # Using DP
     #
-    m = len(string)
-    n = len(pattern)
-    lookup = [[False for _ in range(n + 1)] for _ in range(m + 1)]
+    string_len = len(string)
+    pattern_len = len(pattern)
+    lookup = [[False for _ in range(pattern_len + 1)] for _ in range(string_len + 1)]
     lookup[0][0] = True
-    #    Only '*' can match with empty string
-    for j in range(1, n + 1):
+
+    # Only '*' can match with empty string
+    for j in range(1, pattern_len + 1):
         if pattern[j - 1] == '*':
             lookup[0][j] = lookup[0][j - 1]
-    for i in range(1, m + 1):
-        for j in range(1, n + 1):
+
+    for i in range(1, string_len + 1):
+        for j in range(1, pattern_len + 1):
             #  Two cases if we see a '*'
-            #              a) We ignore ‘*’ character and move
-            #                 to next  character in the pattern,
+            #       a) We ignore ‘*’ character and move to next  character in the pattern,
             #                  i.e., ‘*’ indicates an empty sequence.
-            #              b) '*' character matches with ith
-            #                  character in input 
-            if pattern[j - 1] == string[i - 1] or pattern[j - 1] == '?':
-                lookup[i][j] = lookup[i - 1][j - 1]
+            #       b) '*' character matches with previous character in input
+            if pattern[j - 1] == '*':
+                lookup[i][j] = lookup[i][j - 1] or lookup[i - 1][j]
 
             #  Current characters are considered as
             #              matching in two cases
             #              (a) current character of pattern is '?'
             #              (b) characters actually match
-            elif pattern[j - 1] == '*':
-                lookup[i][j] = lookup[i][j - 1] or lookup[i - 1][j]
+            elif pattern[j - 1] == string[i - 1] or pattern[j - 1] == '?':
+                lookup[i][j] = lookup[i - 1][j - 1]
+
             # If characters don't match
-            else:
+            elif pattern[j - 1] != string[i - 1]:
                 lookup[i][j] = False
 
-    return lookup[m][n]
+    return lookup[string_len][pattern_len]
 
 
-# A function to run test cases
-def test(first, second):
+# A function to run test_me cases
+def test_me(first, second):
     if isMatch(first, second):
         print("Yes")
     else:
@@ -48,9 +49,10 @@ def test(first, second):
 
 
 # Driver program
-test("geeks", "g*ks", )  # Yes
-test("geeksforgeeks", "ge?ks*", )  # Yes
-test("gee", "g*k")  # No because 'k' is not in second
-test("abcd", "abc*c?d", )  # No because second must have 2 instances of 'c'
-test("abcd", "*c*d", )  # Yes
-test("abcd", "*?c*d")  # Yes
+test_me("", "**", )  # Yes
+test_me("geeks", "g*ks", )  # Yes
+test_me("geeksforgeeks", "ge?ks*", )  # Yes
+test_me("gee", "g*k")  # No because 'k' is not in second
+test_me("abcd", "abc*c?d", )  # No because second must have 2 instances of 'c'
+test_me("abcd", "*c*d", )  # Yes
+test_me("abcd", "*?c*d")  # Yes
