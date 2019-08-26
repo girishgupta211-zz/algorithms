@@ -18,10 +18,8 @@ def find_water(arr, n):
     for i in range(n - 2, -1, -1):
         right[i] = max(right[i + 1], arr[i])
 
-    # Calculate the accumulated water element by element
-    # consider the amount of water on i'th bar, the 
-    # amount of water accumulated on this particular 
-    # bar will be equal to min(left[i], right[i]) - arr[i] . 
+    # Calculate the accumulated water element by element consider the amount of water on i'th bar, the
+    # amount of water accumulated on this particular bar will be equal to min(left[i], right[i]) - arr[i] .
     for i in range(0, n):
         water += min(left[i], right[i]) - arr[i]
 

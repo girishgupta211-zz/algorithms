@@ -3,15 +3,9 @@
 
 
 def max_area_histogram(histogram):
-    # This function calculates maximum
-    # rectangular area under given
-    # histogram with n bars
-
-    # Create an empty stack. The stack
-    # holds indexes of histogram[] list.
-    # The bars stored in the stack are
-    # always in increasing order of
-    # their heights.
+    # This function calculates maximum rectangular area under given histogram with n bars
+    # Create an empty stack. The stack holds indexes of histogram[] list.
+    # The bars stored in the stack are always in increasing order of their heights.
     stack = list()
 
     max_area = 0  # Initialize max area
@@ -76,6 +70,8 @@ def max_area_histogram(histogram):
 # Driver Code
 hist = [6, 2, 5, 4, 5, 1, 6]
 print("Maximum area is", max_area_histogram(hist))
+# 12
 
 hist = [6, 1, 3, 6, 5, 4, 6]
 print("Maximum area is", max_area_histogram(hist))
+# 16

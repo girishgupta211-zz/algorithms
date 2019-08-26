@@ -18,8 +18,11 @@ def find_path_in_maze(matrix, x, y, visited):
             return True
         if find_path_in_maze(matrix, x, y + 1, visited):
             return True
+        # Backtrack as there is no more path available
         visited[x][y] = False
         return False
+
+    # not reached the based condition so return false
     return False
 
 
