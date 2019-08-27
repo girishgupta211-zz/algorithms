@@ -31,3 +31,14 @@ def find_max_key_strokes(n):
 
 print(find_max_key_strokes(24))
 print(find_max_key_strokes(6))
+
+
+def maxA(N):
+    best = [0, 1, 2, 3, 4, 5, 6, 9, 12,
+            16, 20, 27, 36, 48, 64, 81]
+    q = (N - 11) // 5 if N > 15 else 0
+    return best[N - 5 * q] * 4 ** q
+
+
+print(maxA(24))
+print(maxA(6))
