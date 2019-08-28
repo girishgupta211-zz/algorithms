@@ -46,8 +46,11 @@ class BinaryHeap:
         if self.size() == 0:
             return None
         minimum = self.get_min()
+        # put last element from heap in the front
         self.items[0] = self.items[-1]
+        # delete the last node
         del self.items[-1]
+        # heapify it again
         self.min_heapify(0)
         return minimum
 
@@ -67,6 +70,8 @@ class BinaryHeap:
             self.max_heapify(maximum)
 
     def min_heapify(self, index):
+        # percolate down in heap
+        # start from top till bottom
         left = self.left(index)
         right = self.right(index)
         if left < self.size() and self.get(left) < self.get(index):
@@ -81,6 +86,7 @@ class BinaryHeap:
             self.min_heapify(minimum)
 
     def insert_max_heap(self, key):
+        # percolate up in heap in Array
         index = self.size()
         self.items.append(key)
 

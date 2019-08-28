@@ -1,5 +1,6 @@
-# Python3 program to find the smallest window
-# containing all characters of a pattern.
+# Python3 program to find the smallest window containing all characters of a pattern.
+# Given two strings string1 and string2, the task is to find the smallest substring in string1
+# containing all characters of string2 [Asked in : Facebook, J P morgan]
 no_of_chars = 128
 
 
@@ -66,6 +67,12 @@ def findSubString(string, pattern):
 if __name__ == "__main__":
     string = "geeksforgeeks"
     pat = "ork"
+
+    print("Smallest window is : ")
+    print(findSubString(string, pat))
+
+    string = "ADOBECODEBANC"
+    pat = "ABC"
 
     print("Smallest window is : ")
     print(findSubString(string, pat))
