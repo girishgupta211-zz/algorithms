@@ -50,21 +50,17 @@ def SieveOfEratosthenes(v):
     return v
 
 
-def compare(num1, num2):
-    # To compare the digits
-    s1 = str(num1)
-    s2 = str(num2)
-    c = 0
-    if s1[0] != s2[0]:
-        c += 1
-    if s1[1] != s2[1]:
-        c += 1
-    if s1[2] != s2[2]:
-        c += 1
-    if s1[3] != s2[3]:
-        c += 1
-        # If the numbers differ only by a single # digit return true else false
-    return c == 1
+def compare(a, b):
+    diff = 0
+    while a:
+        if a % 10 != b % 10:
+            diff += 1
+        a //= 10
+        b //= 10
+    # If the numbers differ only by a single # digit return true else false
+    if diff > 1:
+        return False
+    return True
 
 
 def shortestPath(num1, num2):
@@ -78,8 +74,7 @@ def shortestPath(num1, num2):
         for j in range(i + 1, len(pset)):
             if compare(pset[i], pset[j]):
                 g.addedge(i, j)
-    # Since graph nodes represent indexes # of numbers in pset[], we find indexes
-    # of num1 and num2.
+    # Since graph nodes represent indexes # of numbers in pset[], we find indexes of num1 and num2.
     in1, in2 = None, None
     for j in range(len(pset)):
         if pset[j] == num1:
