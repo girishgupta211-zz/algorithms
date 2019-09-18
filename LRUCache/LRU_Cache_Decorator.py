@@ -60,6 +60,7 @@ if __name__ == '__main__':
     square(2)
     square(3)
     square(4)
+    print(square.cache.values())
     assert (4 not in [v for v in square.cache.values()])
     assert (9 in [v for v in square.cache.values()])
     assert (16 in [v for v in square.cache.values()])
